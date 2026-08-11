@@ -123,6 +123,26 @@
   .path p strong { color: var(--text); font-weight: 600; }
   .path .best { display:inline-block; margin-top:10px; font-size:10.5px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--amber); }
 
+  /* Sidekick chat mockup */
+  .sk { background: var(--bg-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .sk-bar { display: flex; align-items: center; gap: 9px; padding: 11px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .sk-bar .led { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px var(--green-glow); flex-shrink: 0; }
+  .sk-bar .name { font-size: 10.5px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); }
+  .sk-bar .where { margin-left: auto; font-size: 10px; color: var(--faint); }
+  .sk-body { padding: 15px 15px 17px; display: flex; flex-direction: column; gap: 11px; }
+  .sk-q { align-self: flex-end; max-width: 90%; background: var(--purple-glow); border: 1px solid rgba(123,92,255,0.34); border-radius: 12px 12px 4px 12px; padding: 10px 13px; font-size: clamp(11.5px, 1.1vw, 13px); color: var(--text); }
+  .sk-a { align-self: flex-start; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 12px 12px 12px 4px; padding: 12px 14px; font-size: clamp(11.5px, 1.1vw, 12.5px); color: var(--muted); }
+  .sk-a .said { color: var(--text); }
+  .sk-hd { display: flex; justify-content: space-between; gap: 12px; margin: 11px 0 3px; font-size: 9.5px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: var(--faint); }
+  .sk-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: clamp(11px, 1.05vw, 12px); }
+  .sk-row:last-of-type { border-bottom: none; }
+  .sk-row span:first-child { color: var(--text); font-weight: 600; }
+  .sk-row span:last-child { color: var(--green); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .sk-ask { margin-top: 11px; }
+  .sk-act { display: inline-block; margin-top: 9px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px; padding: 6px 13px; border-radius: 16px; border: 1px solid var(--green-dim); color: var(--green); }
+  .sk-cap { font-size: 11.5px; color: var(--faint); margin-top: 11px; line-height: 1.55; }
+  .sk-cap b { color: var(--muted); font-weight: 600; }
+
   .title-slide .kicker { font-size: clamp(11px,1.1vw,13px); font-weight:700; letter-spacing:3.4px; text-transform:uppercase; color:var(--green); margin-bottom:20px; }
   .title-slide h1 span { color: var(--green); }
   .title-slide .sub { font-size: clamp(14.5px,1.6vw,20px); color:var(--muted); margin-top:20px; max-width:660px; }
@@ -244,11 +264,20 @@
         <div class="stat purple"><div class="stat-num">4<span class="unit">x</span></div><div class="stat-label">Faster to complete than a guest checkout</div></div>
       </div>
 
-      <ul class="checks purple" style="margin-top:20px">
-        <li><strong>Shop Pay's buyer network.</strong> Anyone who used Shop Pay on any Shopify store is one tap from converting on yours. Over BFCM 2025, Shop Pay drove <strong>32% of all orders</strong> platform-wide, up 39% year over year.</li>
-        <li><strong>The Shop app is incremental demand.</strong> Shop app GMV grew ~70% year over year in Q1 2026. Shop Cash Offers target <strong>first-time buyers only</strong> and bill you on conversion, not impressions.</li>
-        <li><strong>Customization that survives upgrades.</strong> Checkout Extensibility adds upsells, custom fields, and validation through supported extension points.</li>
-      </ul>
+      <div class="grid grid-3" style="margin-top:16px">
+        <div class="card lane purple">
+          <div class="card-label">Shop Pay's buyer network</div>
+          <div class="card-body">Anyone who has used Shop Pay on any Shopify store is one tap from converting on yours. Over BFCM 2025 it carried <strong>32% of all orders</strong> platform-wide, up 39% year over year.</div>
+        </div>
+        <div class="card lane purple">
+          <div class="card-label">The Shop app</div>
+          <div class="card-body">Incremental discovery, not a wrapper on your site. Shop app GMV grew <strong>~70% year over year</strong> in Q1 2026, and Shop Cash Offers target first-time buyers only, billed on conversion rather than impressions.</div>
+        </div>
+        <div class="card lane purple">
+          <div class="card-label">Customization that lasts</div>
+          <div class="card-body">Checkout Extensibility adds upsells, custom fields, and validation through supported extension points, so what you build survives platform upgrades instead of breaking on them.</div>
+        </div>
+      </div>
 
       <div class="sowhat purple">
         <span class="tag">Do the math</span>
@@ -353,10 +382,10 @@
           <span class="best">Best if trade walk-ins are routine</span>
         </div>
         <div class="path">
-          <div class="path-n">Path 3 · Simple tiering</div>
-          <h4>Staff-applied tier discount</h4>
-          <p>If wholesale pricing is a <strong>flat percentage off retail</strong> across a small number of tiers, staff apply the matching discount at POS with permissions controlling who can. Crude, but zero build and no added app surface.</p>
-          <span class="best">Best for a simple price structure</span>
+          <div class="path-n">Path 3 · Concierge</div>
+          <h4>Place it for them, like a phone order</h4>
+          <p>Staff ask <strong>"do you have a company account with us?"</strong> — then place the order for the buyer from Shopify admin, exactly as they would take it over the phone. The company's catalog, pricing, and quantity rules all apply, and you charge a <strong>card already vaulted on the account</strong> or send it to their terms.</p>
+          <span class="best">Best for high-touch accounts</span>
         </div>
       </div>
 
@@ -393,10 +422,23 @@
         </div>
       </div>
 
-      <ul class="checks amber" style="margin-top:18px">
-        <li><strong>Reported results.</strong> Slam Jam saw a <strong>15% increase in average daily orders</strong> after launching in-store omnichannel. Elite Eleven averages <strong>30+ ship-to-customer orders per day</strong> through endless aisle.</li>
-        <li><strong>One setup dependency.</strong> These workflows depend on per-location inventory being assigned properly. Pooling everything into one generic location is what breaks BOPIS, ship-from-store, and accurate online stock.</li>
-      </ul>
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="stat amber">
+          <div class="stat-num">+15<span class="unit">%</span></div>
+          <div class="stat-label">Increase in average daily orders after launching in-store omnichannel</div>
+          <div class="stat-foot">Slam Jam · published Shopify case study</div>
+        </div>
+        <div class="stat amber">
+          <div class="stat-num">30<span class="unit">+</span></div>
+          <div class="stat-label">Ship-to-customer orders per day through endless aisle</div>
+          <div class="stat-foot">Elite Eleven · published Shopify case study</div>
+        </div>
+      </div>
+
+      <div class="sowhat amber">
+        <span class="tag">One setup dependency</span>
+        All of this depends on per-location inventory being assigned properly. Pooling everything into a single generic location is what breaks pickup, ship-from-store, and accurate online stock counts.
+      </div>
     </div>
   </section>
 
@@ -408,15 +450,30 @@
       <p class="lead">Two capabilities you get by being on the platform rather than by buying and integrating something.</p>
 
       <div class="grid grid-2">
-        <div class="card lane">
-          <div class="card-label">Sidekick — AI inside your admin</div>
-          <div class="card-body">
-            Included at no extra cost, with context on your real store data. Instead of a BI request or a CSV afternoon, the team asks:<br><br>
-            • "Which products dropped hardest in sell-through last month?"<br>
-            • "Build a segment of accounts that ordered twice but not in 90 days."<br>
-            • "Bulk-edit this collection to add the new size option."<br>
-            • "Draft descriptions for these 40 new SKUs in our voice."<br><br>
-            <strong>For a lean team running three channels, this is the difference between reporting and acting.</strong>
+        <div>
+          <div class="sk">
+            <div class="sk-bar">
+              <span class="led"></span>
+              <span class="name">Sidekick</span>
+              <span class="where">Shopify admin</span>
+            </div>
+            <div class="sk-body">
+              <div class="sk-q">Which company accounts ordered 3+ times last quarter but haven't reordered in 90 days?</div>
+              <div class="sk-a">
+                <span class="said">8 company accounts match. Ranked by lifetime value:</span>
+                <div class="sk-hd"><span>Company account</span><span>Since last order</span></div>
+                <div class="sk-row"><span>Ridgeline Outfitters</span><span>142 days</span></div>
+                <div class="sk-row"><span>Coastal Supply Co.</span><span>118 days</span></div>
+                <div class="sk-row"><span>Vertex Athletics</span><span>96 days</span></div>
+                <div class="sk-ask">Two of them have a card on file and sit on Net 30. Want me to build this as a customer segment and draft a reorder note?</div>
+                <span class="sk-act">Create segment</span>
+              </div>
+            </div>
+          </div>
+          <p class="sk-cap"><b>Included at no extra cost</b>, and reading your live data — company accounts, per-location inventory, order history. That question is a BI request on most platforms.</p>
+          <div class="pills" style="margin-top:10px">
+            <span class="pill">"What's below reorder point at the store?"</span>
+            <span class="pill">"Which SKUs sell wholesale but not retail?"</span>
           </div>
         </div>
         <div class="card lane">
