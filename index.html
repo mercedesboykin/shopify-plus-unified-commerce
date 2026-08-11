@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Shopify Plus — B2B, DTC &amp; Retail on One Platform</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0A0E0D;
+    --bg-2:      #101614;
+    --surface:   #151D1A;
+    --border:    #26332E;
+    --green:     #00D68F;
+    --green-dim: #00A876;
+    --green-glow:rgba(0,214,143,0.12);
+    --purple:    #7B5CFF;
+    --purple-glow:rgba(123,92,255,0.14);
+    --amber:     #FFAA33;
+    --amber-glow:rgba(255,170,51,0.13);
+    --text:      #F4F7F5;
+    --muted:     #8FA09A;
+    --faint:     #5D6B66;
+    --max:       1120px;
+  }
+
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.55;
+    -webkit-font-smoothing: antialiased; overflow: hidden;
+  }
+
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.06); z-index: 200; }
+  .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--green-dim), var(--green)); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+  .deck { position: relative; height: 100vh; width: 100%; }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 68px 56px 92px;
+    opacity: 0; visibility: hidden; transform: translateY(14px);
+    transition: opacity 0.42s ease, transform 0.42s ease, visibility 0.42s;
+    overflow-y: auto;
+  }
+  .slide.active { opacity: 1; visibility: visible; transform: none; }
+  .slide-inner { width: 100%; max-width: var(--max); margin: 0 auto; }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: clamp(10px, 1vw, 11.5px); font-weight: 700;
+    letter-spacing: 2.4px; text-transform: uppercase;
+    color: var(--green); margin-bottom: 16px;
+  }
+  .eyebrow .num {
+    display: inline-grid; place-items: center; width: 22px; height: 22px;
+    border-radius: 50%; border: 1.5px solid var(--green-dim);
+    color: var(--green); font-size: 10px; letter-spacing: 0;
+  }
+  .eyebrow.purple { color: var(--purple); } .eyebrow.purple .num { border-color: var(--purple); color: var(--purple); }
+  .eyebrow.amber { color: var(--amber); }  .eyebrow.amber .num  { border-color: var(--amber);  color: var(--amber); }
+
+  h1 { font-size: clamp(36px, 5.8vw, 76px); font-weight: 800; letter-spacing: -2.4px; line-height: 1.03; }
+  h2 { font-size: clamp(26px, 3.9vw, 50px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.07; margin-bottom: 13px; }
+  h2 .g { color: var(--green); } h2 .p { color: var(--purple); } h2 .a { color: var(--amber); }
+
+  .lead { font-size: clamp(14.5px, 1.5vw, 18px); color: var(--muted); max-width: 800px; margin-bottom: 28px; }
+  .lead strong { color: var(--text); font-weight: 600; }
+
+  .grid { display: grid; gap: 13px; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+  .card-label { font-size: 10.5px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+  .card.purple .card-label { color: var(--purple); }
+  .card.amber  .card-label { color: var(--amber); }
+  .card-body { font-size: clamp(12.5px, 1.2vw, 14.5px); color: var(--muted); }
+  .card-body strong { color: var(--text); font-weight: 600; }
+
+  /* channel-tinted top rule */
+  .card.lane { position: relative; overflow: hidden; }
+  .card.lane::before { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background: var(--green); }
+  .card.lane.purple::before { background: var(--purple); }
+  .card.lane.amber::before  { background: var(--amber); }
+
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 20px 18px; position: relative; overflow: hidden; }
+  .stat::after { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background: linear-gradient(90deg, var(--green), transparent); }
+  .stat.purple::after { background: linear-gradient(90deg, var(--purple), transparent); }
+  .stat.amber::after  { background: linear-gradient(90deg, var(--amber), transparent); }
+  .stat-num { font-size: clamp(26px, 3.3vw, 42px); font-weight: 800; letter-spacing: -1.6px; line-height: 1; }
+  .stat.purple .stat-num { color: var(--purple); } .stat.amber .stat-num { color: var(--amber); }
+  .stat-num .unit { font-size: 0.5em; font-weight: 700; letter-spacing: -0.5px; }
+  .stat-label { font-size: clamp(11px, 1.05vw, 12.5px); color: var(--muted); margin-top: 9px; line-height: 1.4; }
+  .stat-foot { font-size: 10.5px; color: var(--faint); margin-top: 7px; }
+
+  .sowhat { margin-top: 22px; padding: 16px 22px; background: var(--green-glow); border-left: 3px solid var(--green); border-radius: 0 12px 12px 0; font-size: clamp(13px, 1.3vw, 15.5px); }
+  .sowhat .tag { display:block; font-size:10.5px; font-weight:700; letter-spacing:1.6px; text-transform:uppercase; color:var(--green); margin-bottom:5px; }
+  .sowhat.purple { background: var(--purple-glow); border-left-color: var(--purple); } .sowhat.purple .tag { color: var(--purple); }
+  .sowhat.amber  { background: var(--amber-glow);  border-left-color: var(--amber); }  .sowhat.amber .tag  { color: var(--amber); }
+
+  ul.checks { list-style: none; display: grid; gap: 10px; }
+  ul.checks li { display: flex; gap: 12px; align-items: flex-start; font-size: clamp(13px, 1.3vw, 15.5px); color: var(--muted); }
+  ul.checks li strong { color: var(--text); font-weight: 600; }
+  ul.checks li::before { content:''; flex-shrink:0; width:7px; height:7px; margin-top:8px; border-radius:50%; background: var(--green); }
+  ul.checks.purple li::before { background: var(--purple); }
+  ul.checks.amber li::before  { background: var(--amber); }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .pill { font-size: 11.5px; font-weight: 600; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); background: var(--bg-2); }
+  .pill.g { border-color: var(--green-dim); color: var(--green); }
+  .pill.p { border-color: var(--purple); color: var(--purple); }
+  .pill.a { border-color: var(--amber); color: var(--amber); }
+
+  /* numbered path blocks */
+  .path { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; position: relative; }
+  .path-n { font-size: 11px; font-weight: 800; letter-spacing: 1.2px; color: var(--amber); margin-bottom: 7px; text-transform: uppercase; }
+  .path h4 { font-size: clamp(14px, 1.4vw, 17px); font-weight: 700; margin-bottom: 7px; letter-spacing: -0.3px; }
+  .path p { font-size: clamp(12.5px, 1.2vw, 14px); color: var(--muted); }
+  .path p strong { color: var(--text); font-weight: 600; }
+  .path .best { display:inline-block; margin-top:10px; font-size:10.5px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--amber); }
+
+  .title-slide .kicker { font-size: clamp(11px,1.1vw,13px); font-weight:700; letter-spacing:3.4px; text-transform:uppercase; color:var(--green); margin-bottom:20px; }
+  .title-slide h1 span { color: var(--green); }
+  .title-slide .sub { font-size: clamp(14.5px,1.6vw,20px); color:var(--muted); margin-top:20px; max-width:660px; }
+  .lanes { display:flex; flex-wrap:wrap; gap:10px; margin-top:34px; padding-top:26px; border-top:1px solid var(--border); }
+  .lane-chip { font-size:12.5px; font-weight:600; padding:8px 16px; border-radius:8px; background:var(--surface); border:1px solid var(--border); color:var(--muted); }
+  .lane-chip b { font-weight:700; margin-right:7px; }
+  .lane-chip.p b { color: var(--purple); } .lane-chip.g b { color: var(--green); } .lane-chip.a b { color: var(--amber); }
+
+  table { width: 100%; border-collapse: collapse; font-size: clamp(12px, 1.2vw, 14.5px); }
+  thead th { text-align: left; padding: 0 14px 10px; font-size: 10.5px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--green); border-bottom: 1px solid var(--border); }
+  thead th.p { color: var(--purple); } thead th.a { color: var(--amber); }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--muted); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td:first-child { color: var(--text); font-weight: 600; width: 26%; }
+
+  .controls { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px; z-index: 150; background: linear-gradient(to top, var(--bg) 55%, transparent); }
+  .dots { display: flex; gap: 7px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; border: none; padding: 0; background: #2C3A34; cursor: pointer; transition: all 0.2s; }
+  .dot:hover { background: var(--green-dim); }
+  .dot.active { background: var(--green); width: 22px; border-radius: 4px; }
+  .nav-group { display: flex; align-items: center; gap: 10px; }
+  .nav-btn { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; cursor: pointer; background: var(--surface); border: 1px solid var(--border); color: var(--muted); font-size: 15px; transition: all 0.15s; }
+  .nav-btn:hover:not(:disabled) { border-color: var(--green-dim); color: var(--green); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .counter { font-size: 12px; font-weight: 600; color: var(--faint); font-variant-numeric: tabular-nums; min-width: 46px; text-align: center; }
+  .counter b { color: var(--text); }
+  .hint { font-size: 11px; color: var(--faint); }
+  .hint kbd { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 10px; font-family: inherit; }
+
+  .sources { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--faint); line-height: 1.6; }
+  .sources b { color: var(--muted); font-weight: 600; }
+
+  @media (max-width: 900px) {
+    .slide { padding: 54px 24px 82px; }
+    .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .hint { display: none; }
+  }
+  @media (max-width: 580px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .dots { display: none; }
+  }
+  @media print {
+    body { overflow: visible; } .controls, .progress, .hint { display: none !important; }
+    .deck { height: auto; }
+    .slide { position: relative; inset: auto; opacity: 1 !important; visibility: visible !important; transform: none !important; page-break-after: always; min-height: 100vh; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<div class="deck" id="deck">
+
+  <!-- ══ 1 · TITLE ══ -->
+  <section class="slide title-slide active">
+    <div class="slide-inner">
+      <div class="kicker">Shopify Plus · Unified Commerce</div>
+      <h1>Three ways they buy.<br>One <span>platform</span> to run it.</h1>
+      <p class="sub">Wholesale accounts, retail shoppers, and a storefront that serves both walking through the same door — on one catalog, one inventory, one customer record.</p>
+      <div class="lanes">
+        <div class="lane-chip p"><b>DTC</b>Online retail</div>
+        <div class="lane-chip g"><b>B2B</b>Wholesale on account</div>
+        <div class="lane-chip a"><b>POS</b>In-store, both audiences</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 2 · THE SHAPE ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="num">01</span> The Shape of the Business</div>
+      <h2>One location. <span class="g">Two kinds of buyer.</span></h2>
+      <p class="lead">A retail customer finds you online and buys. A wholesale account orders on terms. And both of them walk into the same store — a trade buyer picking up a restock in the same aisle as a consumer buying one unit. <strong>Most platforms make you run that as three separate systems.</strong></p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-label">The cost of three systems</div>
+          <div class="card-body">
+            • Catalog maintained in two or three places<br>
+            • Inventory drift between web and shop floor<br>
+            • The same buyer existing as two customer records<br>
+            • Staff toggling between apps mid-transaction<br>
+            • Month-end reconciliation across separate payment stacks<br>
+            • Every new channel is a new integration project
+          </div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">What one platform changes</div>
+          <div class="card-body">
+            • One product catalog, one inventory pool per location<br>
+            • One customer record, whether they buy retail or wholesale<br>
+            • One payment stack across web and counter<br>
+            • One reporting layer across all three motions<br>
+            • Flow, Markets, and Shopify Payments work for B2B <em>and</em> DTC<br>
+            • Adding a channel is configuration, not a rebuild
+          </div>
+        </div>
+      </div>
+
+      <div class="sowhat">
+        <span class="tag">The thesis</span>
+        You aren't buying three products. You're buying one system with three front doors — which is why the back office stays the size it is while the channels multiply.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 3 · DTC ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow purple"><span class="num">02</span> DTC</div>
+      <h2>The best-converting <span class="p">checkout in commerce.</span></h2>
+      <p class="lead">Your retail channel competes on conversion, and Shopify optimizes checkout across millions of stores continuously. <strong>You inherit the result rather than funding the optimization program.</strong></p>
+
+      <div class="grid grid-4">
+        <div class="stat purple"><div class="stat-num">50<span class="unit">%</span></div><div class="stat-label">Shop Pay conversion lift vs. guest checkout (up to)</div></div>
+        <div class="stat purple"><div class="stat-num">10<span class="unit">%+</span></div><div class="stat-label">Better than every other accelerated checkout</div></div>
+        <div class="stat purple"><div class="stat-num">15<span class="unit">%</span></div><div class="stat-label">Average checkout conversion advantage vs. other platforms</div></div>
+        <div class="stat purple"><div class="stat-num">4<span class="unit">x</span></div><div class="stat-label">Faster to complete than a guest checkout</div></div>
+      </div>
+
+      <ul class="checks purple" style="margin-top:20px">
+        <li><strong>Shop Pay's buyer network.</strong> Anyone who used Shop Pay on any Shopify store is one tap from converting on yours. Over BFCM 2025, Shop Pay drove <strong>32% of all orders</strong> platform-wide, up 39% year over year.</li>
+        <li><strong>The Shop app is incremental demand.</strong> Shop app GMV grew ~70% year over year in Q1 2026. Shop Cash Offers target <strong>first-time buyers only</strong> and bill you on conversion, not impressions.</li>
+        <li><strong>Customization that survives upgrades.</strong> Checkout Extensibility adds upsells, custom fields, and validation through supported extension points.</li>
+      </ul>
+
+      <div class="sowhat purple">
+        <span class="tag">Do the math</span>
+        A single point of conversion lift on your DTC revenue is incremental margin at zero additional media spend. That is usually the whole business case before B2B and retail are even counted.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 4 · B2B ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="num">03</span> B2B</div>
+      <h2>Wholesale is <span class="g">native</span>, not an app you bolt on.</h2>
+      <p class="lead">Company accounts, custom pricing, and payment terms are built into the same store as your retail business — <strong>same products, same inventory, same admin.</strong></p>
+
+      <div class="grid grid-4">
+        <div class="card lane">
+          <div class="card-label">Company accounts</div>
+          <div class="card-body">A company holds its <strong>locations</strong> (up to 50) and the <strong>buyers</strong> at each, with Location Admin / Ordering Only / View Only roles. Pricing, terms, and permissions attach to that record.</div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">Catalogs + price lists</div>
+          <div class="card-body">A catalog gates <strong>what they can see</strong> — products outside it can't be added to cart. A price list sets <strong>what they pay</strong>, as a % off base or fixed per variant, with currency-specific pricing.</div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">Ordering rules</div>
+          <div class="card-body">Quantity <strong>minimums, maximums, and increments</strong> enforced in the cart. A must-order-in-12s product blocks a 30-unit checkout. No coupon codes, no manual policing.</div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">Terms &amp; invoicing</div>
+          <div class="card-body">Net terms, due-on-fulfillment, or pay-upfront per company. Buyers on terms <strong>check out without entering payment</strong>; Shopify invoices, sends reminders, and flags past-due. <strong>PO numbers</strong> carry to order and invoice.</div>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top:13px">
+        <div class="card">
+          <div class="card-label">One storefront, two audiences</div>
+          <div class="card-body">A logged-in wholesale buyer sees their catalog, their pricing, their payment options — and you can conditionally show different content. Retail shoppers see none of it. <strong>Shared inventory, one source of truth, one team.</strong></div>
+        </div>
+        <div class="card">
+          <div class="card-label">What Plus adds specifically</div>
+          <div class="card-body">Foundational B2B is on every paid plan as of April 2026. <strong>Plus removes the ceilings:</strong> unlimited catalogs, direct catalog assignment per company and location, and <strong>deposits and partial payments</strong> — plus contextual checkout customization.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 5 · POS ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow amber"><span class="num">04</span> Retail / POS</div>
+      <h2>The store runs on <span class="a">the same brain</span> as the website.</h2>
+      <p class="lead">Shopify POS isn't a connected third-party till. It's the same platform, same catalog, same customer records — so a sale on the floor and a sale online land in one place. <strong>POS Pro is included on Plus for your first 20 locations.</strong></p>
+
+      <div class="grid grid-3">
+        <div class="card lane amber">
+          <div class="card-label">Inventory that stays true</div>
+          <div class="card-body">Per-location stock counts with automated <strong>low-stock alerts</strong>, demand forecasting from sales history, purchase orders raised in POS, and inter-location transfers. <strong>Quick count</strong> for direct-scan adjustments.</div>
+        </div>
+        <div class="card lane amber">
+          <div class="card-label">Staff &amp; the floor</div>
+          <div class="card-body">Role-based permissions per staff member, individual POS staff reporting (AOV, items per order, attributed shipped sales), and exchanges handled at the counter.</div>
+        </div>
+        <div class="card lane amber">
+          <div class="card-label">One customer, one history</div>
+          <div class="card-body">The buyer who ordered online last month is the same record at the register. <strong>Purchase history, contact details, and company affiliation are all there</strong> when staff pull them up.</div>
+        </div>
+      </div>
+
+      <div class="pills">
+        <span class="pill a">POS Terminal</span>
+        <span class="pill a">Tap to Pay</span>
+        <span class="pill a">Shopify Payments — one stack, web + counter</span>
+        <span class="pill a">Markets for retail — per-location pricing</span>
+      </div>
+
+      <div class="sowhat amber">
+        <span class="tag">Why it matters here</span>
+        With a single location, the register is not a side channel — it is where relationships get made with both audiences. Running it on the same platform is what makes the next two slides possible.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 6 · THE B2B WALK-IN (the honest slide) ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow amber"><span class="num">05</span> The In-Store Wholesale Buyer</div>
+      <h2>When a trade buyer <span class="a">walks in.</span></h2>
+      <p class="lead">This is the specific mechanic worth understanding up front, because it's the one place the three channels don't fuse automatically. <strong>B2B catalog pricing does not apply on its own inside a POS checkout</strong> — price lists attach to a logged-in storefront session, and POS doesn't participate in that session. Here are the three ways merchants solve it.</p>
+
+      <div class="grid grid-3">
+        <div class="path">
+          <div class="path-n">Path 1 · Native, no apps</div>
+          <h4>Draft order from POS</h4>
+          <p>Build the cart at the register, attach the <strong>B2B customer and company location</strong>, save as a draft. The draft reflects that company's <strong>pricing, payment terms, and checkout options</strong> automatically — then it's created as an order or paid by invoice on terms.</p>
+          <span class="best">Best for occasional walk-ins</span>
+        </div>
+        <div class="path">
+          <div class="path-n">Path 2 · POS UI extension</div>
+          <h4>Catalog pricing at the register</h4>
+          <p>Purpose-built apps read your <strong>existing native B2B catalogs</strong> and apply that company's pricing in the POS cart. Staff pick the customer and company location; correct pricing applies as tracked line-item adjustments. Some also enforce quantity rules and capture PO numbers.</p>
+          <span class="best">Best if trade walk-ins are routine</span>
+        </div>
+        <div class="path">
+          <div class="path-n">Path 3 · Simple tiering</div>
+          <h4>Staff-applied tier discount</h4>
+          <p>If wholesale pricing is a <strong>flat percentage off retail</strong> across a small number of tiers, staff apply the matching discount at POS with permissions controlling who can. Crude, but zero build and no added app surface.</p>
+          <span class="best">Best for a simple price structure</span>
+        </div>
+      </div>
+
+      <div class="sowhat amber">
+        <span class="tag">Our recommendation</span>
+        Start by mapping how often a trade buyer actually transacts at the counter versus ordering online. If it's a daily motion, go straight to a POS extension so pricing is never a judgment call. If it's occasional, native draft orders cost nothing and keep the account, terms, and PO trail intact. Either way, <strong>the company record, catalog, and terms you set up for B2B online are the same ones the store uses</strong> — you're not building wholesale twice.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 7 · ENDLESS AISLE ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow amber"><span class="num">06</span> One Location, Unlimited Shelf</div>
+      <h2>Sell what isn't <span class="a">on the floor.</span></h2>
+      <p class="lead">With a single store, floor space is your hard constraint — until it isn't. POS Pro turns the register into an order desk for your entire inventory, wherever it sits. <strong>Staff never say "we don't carry that."</strong></p>
+
+      <div class="grid grid-4">
+        <div class="card lane amber">
+          <div class="card-label">Endless aisle</div>
+          <div class="card-body">The sale starts in-store and ships to their home, to the store for pickup, or from a warehouse. <strong>Shipped POS orders follow your order-routing rules</strong>, same as online.</div>
+        </div>
+        <div class="card lane amber">
+          <div class="card-label">Ship from store</div>
+          <div class="card-body">Take payment at the counter, fulfil from wherever has stock, send confirmation and tracking at checkout. <strong>Staff get credited</strong> in POS reporting for shipped sales.</div>
+        </div>
+        <div class="card lane amber">
+          <div class="card-label">Buy online, pick up in store</div>
+          <div class="card-body">Turn the location into a fulfilment point. For a wholesale buyer, a <strong>staged pickup beats freight</strong> on a restock they need today.</div>
+        </div>
+        <div class="card lane amber">
+          <div class="card-label">Return in store</div>
+          <div class="card-body">Online purchases returned or exchanged at the counter — the visit that recovers the margin instead of refunding it.</div>
+        </div>
+      </div>
+
+      <ul class="checks amber" style="margin-top:18px">
+        <li><strong>Reported results.</strong> Slam Jam saw a <strong>15% increase in average daily orders</strong> after launching in-store omnichannel. Elite Eleven averages <strong>30+ ship-to-customer orders per day</strong> through endless aisle.</li>
+        <li><strong>One setup dependency.</strong> These workflows depend on per-location inventory being assigned properly. Pooling everything into one generic location is what breaks BOPIS, ship-from-store, and accurate online stock.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ 8 · AI + AGENTIC ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="num">07</span> Built-In AI &amp; New Demand</div>
+      <h2>An operator in the admin, and <span class="g">your catalog in every AI answer.</span></h2>
+      <p class="lead">Two capabilities you get by being on the platform rather than by buying and integrating something.</p>
+
+      <div class="grid grid-2">
+        <div class="card lane">
+          <div class="card-label">Sidekick — AI inside your admin</div>
+          <div class="card-body">
+            Included at no extra cost, with context on your real store data. Instead of a BI request or a CSV afternoon, the team asks:<br><br>
+            • "Which products dropped hardest in sell-through last month?"<br>
+            • "Build a segment of accounts that ordered twice but not in 90 days."<br>
+            • "Bulk-edit this collection to add the new size option."<br>
+            • "Draft descriptions for these 40 new SKUs in our voice."<br><br>
+            <strong>For a lean team running three channels, this is the difference between reporting and acting.</strong>
+          </div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">Agentic commerce — new discovery surface</div>
+          <div class="card-body">
+            Buyers now start product research inside AI assistants. Shopify makes you discoverable there as a platform capability:<br><br>
+            • <strong>Agentic Storefronts</strong> — free, on by default, managed centrally from admin<br>
+            • <strong>Shopify Catalog</strong> — products standardized, price and inventory verified in real time<br>
+            • <strong>Universal Commerce Protocol</strong> — open agentic checkout standard co-developed with Google, backed by Amazon, Microsoft, Visa, Mastercard, Amex, Meta, Stripe, Salesforce, Target, and Walmart<br><br>
+            <strong>Live surfaces:</strong> ChatGPT, Google AI Mode &amp; Gemini, Microsoft Copilot, Perplexity.
+          </div>
+        </div>
+      </div>
+
+      <div class="sowhat">
+        <span class="tag">Why it matters</span>
+        Neither of these was on anyone's requirements list two years ago. Both arrived as platform updates rather than projects — which is the actual argument for consolidating onto a platform that ships.
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 9 · SCALE ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="num">08</span> Proof of Scale</div>
+      <h2>Peak isn't a project. <span class="g">It's a Tuesday.</span></h2>
+      <p class="lead">Black Friday–Cyber Monday 2025 is the honest stress test — real production traffic across every merchant on the platform, at the same time.</p>
+
+      <div class="grid grid-4">
+        <div class="stat"><div class="stat-num">$14.6<span class="unit">B</span></div><div class="stat-label">Merchant GMV over BFCM 2025</div><div class="stat-foot">+27% year over year</div></div>
+        <div class="stat"><div class="stat-num">$5.1<span class="unit">M</span></div><div class="stat-label">Peak sales per minute</div><div class="stat-foot">~$85K every second</div></div>
+        <div class="stat"><div class="stat-num">81<span class="unit">M+</span></div><div class="stat-label">Buyers purchased over the weekend</div><div class="stat-foot">94,900+ merchants had their best day ever</div></div>
+        <div class="stat"><div class="stat-num">489<span class="unit">M</span></div><div class="stat-label">Peak edge requests per minute</div><div class="stat-foot">2.2 trillion total · 90 PB served</div></div>
+      </div>
+
+      <ul class="checks" style="margin-top:20px">
+        <li><strong>Tested before it mattered.</strong> Five production-scale load tests from April through October, run from three cloud regions simultaneously — hitting <strong>80,000+ checkouts per minute</strong> in testing.</li>
+        <li><strong>You don't do capacity planning.</strong> No infrastructure freeze, no war room, no scaling invoice. <strong>99.99% uptime SLA</strong>, PCI Level 1, and 24/7 priority Plus support.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ 10 · CLOSE ══ -->
+  <section class="slide">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="num">09</span> The Stack</div>
+      <h2>One platform. <span class="p">Three</span> <span class="g">revenue</span> <span class="a">motions.</span></h2>
+      <p class="lead">Each channel stands on its own. The reason to consolidate is that they stop being separate problems.</p>
+
+      <div class="grid grid-3">
+        <div class="card lane purple">
+          <div class="card-label">DTC</div>
+          <div class="card-body">Best-converting checkout in commerce, Shop Pay's buyer network, and the Shop app as incremental demand.</div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">B2B</div>
+          <div class="card-body">Company accounts, gated catalogs, custom price lists, quantity rules, and net terms with invoicing — native.</div>
+        </div>
+        <div class="card lane amber">
+          <div class="card-label">Retail</div>
+          <div class="card-body">POS Pro included on Plus. True per-location inventory, staff roles, and endless aisle beyond your floor space.</div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">Unified core</div>
+          <div class="card-body">One catalog, one inventory, one customer record, one payment stack, one reporting layer.</div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">AI + agentic</div>
+          <div class="card-body">Sidekick in the admin at no extra cost. Your catalog discoverable across ChatGPT, Google, Copilot, and Perplexity.</div>
+        </div>
+        <div class="card lane">
+          <div class="card-label">Scale</div>
+          <div class="card-body">$14.6B BFCM weekend and a 99.99% SLA. Your peak is a rounding error against the platform's.</div>
+        </div>
+      </div>
+
+      <div class="sowhat">
+        <span class="tag">The one-liner</span>
+        Shopify Plus is the only place a wholesale account, a retail shopper, and a walk-in at your counter resolve to the same product, the same stock number, and the same customer — which is what lets a small team run three channels without three back offices.
+      </div>
+
+      <div class="sources">
+        <b>Sources.</b> Shop Pay and checkout conversion figures: commissioned "Big Three" global management consulting study completed April 2023, as published by Shopify. BFCM 2025 sales and infrastructure figures: Shopify newsroom and investor press release, December 2, 2025, and Shopify Engineering. Shop app growth: Shopify Q1 2026 results. B2B capabilities and plan availability: Shopify Help Center; foundational B2B extended to all paid plans April 2, 2026. POS Pro capabilities, omnichannel workflows, and merchant results: Shopify retail documentation and published case studies.
+        <br><br>
+        <b>Note.</b> No pricing is shown. Platform fees, payment processing rates, and per-location POS fees are deal- and region-specific — confirm against the current order form. B2B catalog pricing behaviour in POS reflected here is accurate as of August 2026; verify current capability before committing to an approach, as this area is actively developing.
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="controls">
+  <div class="dots" id="dots"></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> to navigate · <kbd>F</kbd> fullscreen</div>
+  <div class="nav-group">
+    <div class="counter"><b id="cur">1</b> / <span id="total">10</span></div>
+    <button class="nav-btn" id="prev" aria-label="Previous slide">&#8249;</button>
+    <button class="nav-btn" id="next" aria-label="Next slide">&#8250;</button>
+  </div>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap = document.getElementById('dots');
+  const bar = document.getElementById('progressBar');
+  const curEl = document.getElementById('cur');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  let i = 0;
+
+  document.getElementById('total').textContent = slides.length;
+
+  slides.forEach((_, n) => {
+    const d = document.createElement('button');
+    d.className = 'dot';
+    d.setAttribute('aria-label', 'Go to slide ' + (n + 1));
+    d.addEventListener('click', () => go(n));
+    dotsWrap.appendChild(d);
+  });
+  const dots = Array.from(dotsWrap.children);
+
+  function go(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    dots.forEach((d, k) => d.classList.toggle('active', k === i));
+    bar.style.width = ((i + 1) / slides.length * 100) + '%';
+    curEl.textContent = i + 1;
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === slides.length - 1;
+    slides[i].scrollTop = 0;
+    history.replaceState(null, '', '#' + (i + 1));
+  }
+
+  prevBtn.addEventListener('click', () => go(i - 1));
+  nextBtn.addEventListener('click', () => go(i + 1));
+
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(i + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(i - 1); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(slides.length - 1);
+    else if (e.key.toLowerCase() === 'f') {
+      document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    }
+  });
+
+  let x0 = null;
+  document.addEventListener('touchstart', e => x0 = e.touches[0].clientX, {passive: true});
+  document.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 55) go(dx < 0 ? i + 1 : i - 1);
+    x0 = null;
+  }, {passive: true});
+
+  const start = parseInt(location.hash.slice(1), 10);
+  go(Number.isInteger(start) && start > 0 ? start - 1 : 0);
+</script>
+
+</body>
+</html>
