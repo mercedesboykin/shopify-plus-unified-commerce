@@ -123,25 +123,69 @@
   .path p strong { color: var(--text); font-weight: 600; }
   .path .best { display:inline-block; margin-top:10px; font-size:10.5px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--amber); }
 
-  /* Sidekick chat mockup */
-  .sk { background: var(--bg-2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
-  .sk-bar { display: flex; align-items: center; gap: 9px; padding: 11px 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
-  .sk-bar .led { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px var(--green-glow); flex-shrink: 0; }
-  .sk-bar .name { font-size: 10.5px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); }
-  .sk-bar .where { margin-left: auto; font-size: 10px; color: var(--faint); }
-  .sk-body { padding: 15px 15px 17px; display: flex; flex-direction: column; gap: 11px; }
-  .sk-q { align-self: flex-end; max-width: 90%; background: var(--purple-glow); border: 1px solid rgba(123,92,255,0.34); border-radius: 12px 12px 4px 12px; padding: 10px 13px; font-size: clamp(11.5px, 1.1vw, 13px); color: var(--text); }
-  .sk-a { align-self: flex-start; width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 12px 12px 12px 4px; padding: 12px 14px; font-size: clamp(11.5px, 1.1vw, 12.5px); color: var(--muted); }
-  .sk-a .said { color: var(--text); }
-  .sk-hd { display: flex; justify-content: space-between; gap: 12px; margin: 11px 0 3px; font-size: 9.5px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: var(--faint); }
-  .sk-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: clamp(11px, 1.05vw, 12px); }
-  .sk-row:last-of-type { border-bottom: none; }
-  .sk-row span:first-child { color: var(--text); font-weight: 600; }
-  .sk-row span:last-child { color: var(--green); font-variant-numeric: tabular-nums; flex-shrink: 0; }
-  .sk-ask { margin-top: 11px; }
-  .sk-act { display: inline-block; margin-top: 9px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.4px; padding: 6px 13px; border-radius: 16px; border: 1px solid var(--green-dim); color: var(--green); }
-  .sk-cap { font-size: 11.5px; color: var(--faint); margin-top: 11px; line-height: 1.55; }
+  /* ── Sidekick — live admin UI (light), animated ── */
+  .sk-wrap { position: relative; }
+  .sk-wrap::before {
+    content: ''; position: absolute; inset: -20px -12px -12px;
+    background: radial-gradient(62% 58% at 50% 0%, rgba(123,92,255,0.40), transparent 72%);
+    filter: blur(24px); z-index: 0; pointer-events: none;
+  }
+  .sk {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    background: #FFFFFF; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 24px 54px rgba(0,0,0,0.58), 0 0 0 1px rgba(255,255,255,0.09);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+
+  .sk-top { display: flex; align-items: center; gap: 9px; padding: 11px 14px; background: #FCFBFF; border-bottom: 1px solid #EAE7F2; }
+  .sk-mark { width: 23px; height: 23px; border-radius: 7px; display: grid; place-items: center; font-size: 12px; color: #fff; background: linear-gradient(135deg, #A98BFF, #5700D1); flex-shrink: 0; }
+  .sk-name { font-size: 12.5px; font-weight: 650; color: #303030; letter-spacing: -0.1px; }
+  .sk-badge { margin-left: auto; font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #5700D1; background: #F1EBFF; border-radius: 20px; padding: 3px 9px; }
+
+  .sk-chat { flex: 1; min-height: 226px; padding: 14px; display: flex; flex-direction: column; gap: 11px; }
+  .sk-msg { display: flex; gap: 9px; animation: skIn .34s cubic-bezier(.22,.9,.3,1) both; }
+  @keyframes skIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .sk-user { justify-content: flex-end; }
+  .sk-bub { max-width: 87%; background: #F1EBFF; color: #2B2B2B; border-radius: 14px 14px 5px 14px; padding: 9px 13px; font-size: 12.5px; line-height: 1.45; }
+  .sk-av { flex-shrink: 0; width: 23px; height: 23px; border-radius: 7px; display: grid; place-items: center; font-size: 11px; color: #fff; background: linear-gradient(135deg, #A98BFF, #5700D1); }
+  .sk-resp { flex: 1; min-width: 0; font-size: 12.5px; color: #303030; line-height: 1.5; }
+  .sk-resp p { margin-bottom: 3px; }
+  .sk-resp p.sub { color: #5C5C5C; margin-top: 6px; }
+  .sk-resp b { font-weight: 650; color: #1A1A1A; }
+
+  .sk-think { display: flex; align-items: center; gap: 8px; height: 23px; }
+  .sk-think .d { width: 5px; height: 5px; border-radius: 50%; background: #9B7BFF; animation: skBob 1.15s infinite ease-in-out; }
+  .sk-think .d:nth-child(2) { animation-delay: .16s; }
+  .sk-think .d:nth-child(3) { animation-delay: .32s; }
+  @keyframes skBob { 0%,80%,100% { transform: translateY(0); opacity: .3; } 40% { transform: translateY(-4px); opacity: 1; } }
+  .sk-think .lbl { font-size: 11.5px; color: #8A8A8A; margin-left: 3px; }
+
+  .sk-tbl { margin: 9px 0 4px; border: 1px solid #EAEAEA; border-radius: 9px; overflow: hidden; }
+  .sk-hrow, .sk-trow { display: flex; justify-content: space-between; gap: 10px; padding: 7px 11px; }
+  .sk-hrow { background: #FAFAFA; border-bottom: 1px solid #EAEAEA; font-size: 9px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #8A8A8A; }
+  .sk-trow { border-bottom: 1px solid #F2F2F2; font-size: 11.5px; animation: skIn .3s ease both; }
+  .sk-trow:last-child { border-bottom: none; }
+  .sk-trow b { font-weight: 600; color: #303030; }
+  .sk-trow i { font-style: normal; font-weight: 600; color: #5700D1; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .sk-cta { display: inline-block; margin-top: 9px; background: #303030; color: #fff; border: none; border-radius: 8px; padding: 7px 14px; font-size: 11.5px; font-weight: 600; font-family: inherit; animation: skIn .3s ease both; }
+
+  .sk-bar { display: flex; align-items: center; gap: 9px; padding: 11px 12px; background: #fff; border-top: 1px solid #EDEDED; }
+  .sk-field { flex: 1; min-width: 0; min-height: 36px; border: 1px solid #DCD3F5; background: #FCFBFF; border-radius: 10px; padding: 9px 12px; font-size: 12.5px; line-height: 1.35; color: #303030; transition: border-color .2s, box-shadow .2s; }
+  .sk-field.hot { border-color: #7B5CFF; box-shadow: 0 0 0 3px rgba(123,92,255,0.15); }
+  .sk-ph { color: #9A9A9A; }
+  .sk-caret { display: inline-block; width: 1.5px; height: 13px; background: #5700D1; vertical-align: -2px; margin-left: 1px; animation: skBlink 1.05s step-end infinite; }
+  @keyframes skBlink { 50% { opacity: 0; } }
+  .sk-send { flex-shrink: 0; width: 32px; height: 32px; border-radius: 9px; border: none; display: grid; place-items: center; font-size: 13px; color: #fff; background: linear-gradient(135deg, #A98BFF, #5700D1); opacity: .4; transition: opacity .22s, transform .12s; }
+  .sk-send.on { opacity: 1; }
+  .sk-send.hit { transform: scale(.86); }
+
+  .sk-cap { font-size: 11.5px; color: var(--faint); margin-top: 13px; line-height: 1.55; }
   .sk-cap b { color: var(--muted); font-weight: 600; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-msg, .sk-trow, .sk-cta, .sk-caret, .sk-think .d { animation: none !important; }
+  }
 
   .title-slide .kicker { font-size: clamp(11px,1.1vw,13px); font-weight:700; letter-spacing:3.4px; text-transform:uppercase; color:var(--green); margin-bottom:20px; }
   .title-slide h1 span { color: var(--green); }
@@ -451,26 +495,21 @@
 
       <div class="grid grid-2">
         <div>
-          <div class="sk">
-            <div class="sk-bar">
-              <span class="led"></span>
-              <span class="name">Sidekick</span>
-              <span class="where">Shopify admin</span>
-            </div>
-            <div class="sk-body">
-              <div class="sk-q">Which company accounts ordered 3+ times last quarter but haven't reordered in 90 days?</div>
-              <div class="sk-a">
-                <span class="said">8 company accounts match. Ranked by lifetime value:</span>
-                <div class="sk-hd"><span>Company account</span><span>Since last order</span></div>
-                <div class="sk-row"><span>Ridgeline Outfitters</span><span>142 days</span></div>
-                <div class="sk-row"><span>Coastal Supply Co.</span><span>118 days</span></div>
-                <div class="sk-row"><span>Vertex Athletics</span><span>96 days</span></div>
-                <div class="sk-ask">Two of them have a card on file and sit on Net 30. Want me to build this as a customer segment and draft a reorder note?</div>
-                <span class="sk-act">Create segment</span>
+          <div class="sk-wrap">
+            <div class="sk" id="skDemo">
+              <div class="sk-top">
+                <span class="sk-mark">&#10022;</span>
+                <span class="sk-name">Sidekick</span>
+                <span class="sk-badge">Shopify admin</span>
+              </div>
+              <div class="sk-chat" id="skChat"></div>
+              <div class="sk-bar">
+                <div class="sk-field" id="skField"><span id="skTyped"></span><span class="sk-caret" id="skCaret"></span><span class="sk-ph" id="skPh">Ask Sidekick anything about your store</span></div>
+                <button class="sk-send" id="skSend" aria-hidden="true" tabindex="-1">&#8593;</button>
               </div>
             </div>
           </div>
-          <p class="sk-cap"><b>Included at no extra cost</b>, and reading your live data — company accounts, per-location inventory, order history. That question is a BI request on most platforms.</p>
+          <p class="sk-cap"><b>Included at no extra cost</b>, reading live store data — company accounts, per-location inventory, order history. On most platforms that question is a BI request.</p>
           <div class="pills" style="margin-top:10px">
             <span class="pill">"What's below reorder point at the store?"</span>
             <span class="pill">"Which SKUs sell wholesale but not retail?"</span>
@@ -605,6 +644,7 @@
     nextBtn.disabled = i === slides.length - 1;
     slides[i].scrollTop = 0;
     history.replaceState(null, '', '#' + (i + 1));
+    syncSidekick();
   }
 
   prevBtn.addEventListener('click', () => go(i - 1));
@@ -628,6 +668,123 @@
     if (Math.abs(dx) > 55) go(dx < 0 ? i + 1 : i - 1);
     x0 = null;
   }, {passive: true});
+
+  /* ── Sidekick demo: type → submit → think → answer, loops while its slide is up ── */
+  const sk = (function () {
+    const host = document.getElementById('skDemo');
+    if (!host) return null;
+    const chat  = document.getElementById('skChat');
+    const field = document.getElementById('skField');
+    const typed = document.getElementById('skTyped');
+    const caret = document.getElementById('skCaret');
+    const ph    = document.getElementById('skPh');
+    const send  = document.getElementById('skSend');
+
+    const Q = "Which company accounts ordered 3+ times last quarter but haven't reordered in 90 days?";
+    const ROWS = [['Ridgeline Outfitters', '142 days'], ['Coastal Supply Co.', '118 days'], ['Vertex Athletics', '96 days']];
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let timers = [], running = false;
+    const at = (ms, fn) => timers.push(setTimeout(fn, ms));
+    const kill = () => { timers.forEach(clearTimeout); timers = []; };
+    const node = html => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; };
+
+    const bubble = () => node('<div class="sk-msg sk-user"><div class="sk-bub">' + Q + '</div></div>');
+    const shell  = () => node('<div class="sk-msg sk-bot"><div class="sk-av">&#10022;</div><div class="sk-resp">'
+      + '<p><b>8 company accounts</b> match. Ranked by lifetime value:</p>'
+      + '<div class="sk-tbl"><div class="sk-hrow"><span>Company account</span><span>Since last order</span></div></div>'
+      + '</div></div>');
+    const rowEl  = r => node('<div class="sk-trow"><b>' + r[0] + '</b><i>' + r[1] + '</i></div>');
+    const follow = () => node('<p class="sub">Two have a card on file and sit on Net&nbsp;30. Want me to build this as a customer segment and draft a reorder note?</p>');
+    const cta    = () => node('<button class="sk-cta" tabindex="-1">Create segment</button>');
+
+    function reset() {
+      chat.innerHTML = '';
+      typed.textContent = '';
+      ph.style.display = '';
+      caret.style.display = '';
+      field.classList.remove('hot');
+      send.classList.remove('on', 'hit');
+    }
+
+    function settled() {
+      reset();
+      chat.appendChild(bubble());
+      const s = shell();
+      chat.appendChild(s);
+      const tbl = s.querySelector('.sk-tbl');
+      ROWS.forEach(r => tbl.appendChild(rowEl(r)));
+      const resp = s.querySelector('.sk-resp');
+      resp.appendChild(follow());
+      resp.appendChild(cta());
+    }
+
+    function run() {
+      kill();
+      running = true;
+      reset();
+      if (reduced) return settled();
+
+      const SPEED = 26, LEAD = 620;
+
+      at(LEAD - 200, () => field.classList.add('hot'));
+      for (let n = 0; n < Q.length; n++) {
+        at(LEAD + n * SPEED, () => {
+          if (n === 0) ph.style.display = 'none';
+          typed.textContent = Q.slice(0, n + 1);
+          if (n > 1) send.classList.add('on');
+        });
+      }
+
+      const submit = LEAD + Q.length * SPEED + 480;
+      at(submit, () => {
+        send.classList.add('hit');
+        chat.appendChild(bubble());
+        typed.textContent = '';
+        ph.style.display = '';
+        field.classList.remove('hot');
+        send.classList.remove('on');
+      });
+      at(submit + 150, () => send.classList.remove('hit'));
+
+      let think;
+      at(submit + 430, () => {
+        think = node('<div class="sk-msg sk-bot"><div class="sk-av">&#10022;</div><div class="sk-think">'
+          + '<span class="d"></span><span class="d"></span><span class="d"></span>'
+          + '<span class="lbl">Checking company accounts and order history&hellip;</span></div></div>');
+        chat.appendChild(think);
+      });
+
+      const reply = submit + 2350;
+      let resp, tbl;
+      at(reply, () => {
+        if (think) think.remove();
+        const s = shell();
+        chat.appendChild(s);
+        resp = s.querySelector('.sk-resp');
+        tbl = s.querySelector('.sk-tbl');
+      });
+      ROWS.forEach((r, n) => at(reply + 400 + n * 300, () => tbl && tbl.appendChild(rowEl(r))));
+
+      const done = reply + 400 + ROWS.length * 300;
+      at(done + 280, () => resp && resp.appendChild(follow()));
+      at(done + 760, () => resp && resp.appendChild(cta()));
+      at(done + 6200, run);
+    }
+
+    return {
+      start() { if (!running) run(); },
+      stop() { kill(); running = false; }
+    };
+  })();
+
+  function syncSidekick() {
+    if (!sk) return;
+    const host = document.getElementById('skDemo');
+    const owner = host && host.closest('.slide');
+    if (!owner) return;
+    owner.classList.contains('active') ? sk.start() : sk.stop();
+  }
 
   const start = parseInt(location.hash.slice(1), 10);
   go(Number.isInteger(start) && start > 0 ? start - 1 : 0);
